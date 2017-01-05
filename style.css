@@ -1,0 +1,87 @@
+@charset "UTF-8";
+
+body
+{
+    margin: 50px;
+    background-color: #f2f2f2;
+    font-family: "Hiragino Kaku Gothic Pro";
+}
+
+p
+{
+    margin: 0;
+}
+
+a
+{
+    text-decoration: none;
+    color: black;
+}
+
+.entry-box
+{
+    display: inline-block;
+    width: 400px;
+    height: 200px;
+    font-size: 0;
+    background-color: white;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 6px 9px 18px -2px rgba(0,0,0,0.15);
+    margin-right: 50px;
+    margin-bottom: 30px;
+}
+
+.entry-box > div
+{
+    display: inline-block;
+    vertical-align: top;
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+}
+
+.img-box
+{
+    line-height: 200px;
+}
+
+.img-box img
+{
+    height: 100%;
+}
+
+.img-box img.wide
+{
+    display: inline-block;
+    vertical-align: middle;
+    height: auto;
+    width: 100%;    
+}
+
+.info-box p
+{
+    vertical-align: top;
+    color: black;
+    box-sizing: border-box;
+    overflow: auto;
+    padding-left: 10px;
+}
+
+.info-box p.title
+{    
+    width: 100%;
+    height: 170px;
+    font-size: 20px;
+    padding: 10px;
+}
+
+.info-box p.type
+{
+    width: 100%;
+    height: 30px;
+    vertical-align: middle;
+    line-height: 30px;
+    color: #858585;
+    font-size: 15px;
+}
