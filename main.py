@@ -8,7 +8,7 @@ class db:
         self.idc=0;
         self.loadIdCount();
         
-        self.c.execute('''create table if not exists db (id int,title text,type text,cover text,link text)''');
+        self.c.execute('''create table if not exists db (id int,title text,type text,cover text,link text,tags text)''');
         self.c.execute('''create table if not exists tags (id int,tag text)''');
         self.db.commit();
 
@@ -24,7 +24,7 @@ class db:
         
     def add(self,title="<>",ttype="<>",cover="<>",link="<>"):
         self.idc+=1;
-        self.c.execute('''insert into db values("{}","{}","{}","{}","{}")'''.format(self.idc,title,ttype,cover,link));
+        self.c.execute('''insert into db values("{}","{}","{}","{}","{}")'''.format(self.idc,title,ttype,cover,link,tags));
 
     def commit(self):
         with open("idcount","w") as ic:
@@ -40,9 +40,52 @@ class db:
         return self.c.fetchall();
 
 def main():
-    d=db("sample.db");
-    d.add("title1","type1","cover","link");
-    d.commit();
-    print(d.getall());
+    # d=db("sample.db");
+    # d.add("title1","type1","cover","link");
+    # d.commit();
+    # print(d.getall());
+    with open("output.html","w+") as ofile:
+        htmltop='''
+<!doctype html>
+
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="main.js"></script>
+  </head>
+  
+  <body>''';
+        htmlbot='''
+  </body>
+  
+<html>''';
+        ofile.write(htmltop);
+        ofile.write(genEntryBox("bob","type1","","http://i.imgur.com/rUleL5Y.png","google.com",1));
+        ofile.write(htmlbot);
+    
+def genEntryBox(title,ttype,tags,cover,link,wide=0):
+    if wide!=0:
+        wide='class="wide" ';
+    else:
+        wide="";
+        
+    html='''
+<a href="{}">
+  <div class="entry-box">
+    <div class="img-box">
+      <img {}src="{}">
+    </div>
+    
+    <div class="info-box">
+      <p class="tags">{}</p>
+      <p class="title">{}</p>
+      <p class="type">{}</p>
+    </div>
+  </div>
+</a>'''.format(link,wide,cover,tags,title,ttype);
+    return html;
     
 main();
