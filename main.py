@@ -8,7 +8,16 @@ class db:
         self.idc=0;
         self.loadIdCount();
         
-        self.c.execute('''create table if not exists db (id int,title text,type text,cover text,link text,tags text)''');
+        self.c.execute('''
+        create table if not exists db (
+        id int,
+        title text,
+        type text,
+        cover text,
+        link text,
+        tags text,
+        wide int)''');
+
         self.c.execute('''create table if not exists tags (id int,tag text)''');
         self.db.commit();
 
@@ -22,28 +31,36 @@ class db:
         with open("idcount","r") as ic:
             self.idc=int(ic.read());            
         
-    def add(self,title="<>",ttype="<>",cover="<>",link="<>"):
+    def add(self,title="",ttype="",cover="",link="",tags="",wide=0):
         self.idc+=1;
-        self.c.execute('''insert into db values("{}","{}","{}","{}","{}")'''.format(self.idc,title,ttype,cover,link,tags));
+        self.c.execute('''insert into db values("{}","{}","{}","{}","{}","{}","{}")'''.format(self.idc,title,ttype,cover,link,tags,wide));
 
     def commit(self):
         with open("idcount","w") as ic:
             ic.write(str(self.idc));            
         self.db.commit();
         
-    def getall(self):
+    def getAll(self):
         self.c.execute('''select * from db''');
         return self.c.fetchall();
 
-    def gettype(self,ttype):
+    def getType(self,ttype):
         self.c.execute('''select * from db where type="{}"'''.format(ttype));
         return self.c.fetchall();
 
+    def printTableAll(self):
+        table=self.getAll();            
+        for x in table:
+            print(x);
+
 def main():
-    # d=db("sample.db");
-    # d.add("title1","type1","cover","link");
+    d=db("sample.db");
+    # d.add("bob2","type1","img2","link2.com","bill,pop",0);
     # d.commit();
-    # print(d.getall());
+    d.printTableAll();
+
+#not done    
+def writeOutput(entries):
     with open("output.html","w+") as ofile:
         htmltop='''
 <!doctype html>
@@ -58,14 +75,19 @@ def main():
   </head>
   
   <body>''';
+
         htmlbot='''
   </body>
   
 <html>''';
+
         ofile.write(htmltop);
-        ofile.write(genEntryBox("bob","type1","","http://i.imgur.com/rUleL5Y.png","google.com",1));
+
+        for x in entries:
+            ofile.write(genEntryBox(x[1],x[2],x[5],x[3],x[4],x[6]));
+
         ofile.write(htmlbot);
-    
+
 def genEntryBox(title,ttype,tags,cover,link,wide=0):
     if wide!=0:
         wide='class="wide" ';
@@ -88,4 +110,19 @@ def genEntryBox(title,ttype,tags,cover,link,wide=0):
 </a>'''.format(link,wide,cover,tags,title,ttype);
     return html;
     
+def parseRawData():
+    data=[];
+    entry=[];
+    with open("rawdata") as ifile:        
+        for l in ifile:            
+            l=l[:-1];
+            if l=="---":
+                entry.append(0); #wide value maybe change later
+                data.append(entry);                
+                entry=[];
+                continue;
+            entry.append(l);            
+        
+    return data;
+
 main();
