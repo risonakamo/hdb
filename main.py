@@ -1,63 +1,13 @@
 import os,sqlite3;
-
-class db:
-    def __init__(self,dbFilename):
-        self.db=sqlite3.connect(dbFilename);
-        self.c=self.db.cursor();
-        
-        self.idc=0;
-        self.loadIdCount();
-        
-        self.c.execute('''
-        create table if not exists db (
-        id int,
-        title text,
-        type text,
-        cover text,
-        link text,
-        tags text,
-        wide int)''');
-
-        self.c.execute('''create table if not exists tags (id int,tag text)''');
-        self.db.commit();
-
-    def loadIdCount(self):
-        if not os.path.exists("idcount"):
-            print("creating idcount");
-            with open("idcount","w+") as ic:
-                ic.write("0");
-            return;
-
-        with open("idcount","r") as ic:
-            self.idc=int(ic.read());            
-        
-    def add(self,title="",ttype="",cover="",link="",tags="",wide=0):
-        self.idc+=1;
-        self.c.execute('''insert into db values("{}","{}","{}","{}","{}","{}","{}")'''.format(self.idc,title,ttype,cover,link,tags,wide));
-
-    def commit(self):
-        with open("idcount","w") as ic:
-            ic.write(str(self.idc));            
-        self.db.commit();
-        
-    def getAll(self):
-        self.c.execute('''select * from db''');
-        return self.c.fetchall();
-
-    def getType(self,ttype):
-        self.c.execute('''select * from db where type="{}"'''.format(ttype));
-        return self.c.fetchall();
-
-    def printTableAll(self):
-        table=self.getAll();            
-        for x in table:
-            print(x);
+from db import db;
 
 def main():
     d=db("sample.db");
     # d.add("bob2","type1","img2","link2.com","bill,pop",0);
     # d.commit();
-    d.printTableAll();
+    # addRawData(d,"rawdata");
+    # d.printAllTags();
+    d.dexecute("select db.title from db,tags where tags.tag in ('anal','loli') and db.type='manga/group'");
 
 #not done    
 def writeOutput(entries):
@@ -109,13 +59,15 @@ def genEntryBox(title,ttype,tags,cover,link,wide=0):
   </div>
 </a>'''.format(link,wide,cover,tags,title,ttype);
     return html;
-    
-def parseRawData():
+
+#read rawdata file and return data array
+def parseRawData(filename="rawdata"):
     data=[];
     entry=[];
-    with open("rawdata") as ifile:        
+    with open(filename) as ifile:        
         for l in ifile:            
-            l=l[:-1];
+            if l[-1]=="\n":
+                l=l[:-1];
             if l=="---":
                 entry.append(0); #wide value maybe change later
                 data.append(entry);                
@@ -125,4 +77,13 @@ def parseRawData():
         
     return data;
 
+#read rawdata and add to database
+def addRawData(d,filename="rawdata"):
+    data=parseRawData(filename);
+    for i,x in enumerate(data):
+        if i==0:
+            continue;
+        d.add(x[0],x[1],x[2],x[3],x[4],0);
+    d.commit();
+        
 main();
