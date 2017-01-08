@@ -1,18 +1,94 @@
-import os,sqlite3;
+import os,sqlite3,random;
 from db import db;
+
+validFields=set(["title","type","cover","link"]);
 
 def main():
     d=db("sample.db");
-    # d.add("bob2","type1","img2","link2.com","bill,pop",0);
-    # d.commit();
-    addRawData(d,"rawdata");
-    writeOutput(d.getAll());
-    # d.printAllTags();
-    # d.dexecute("select db.* from tags,db where (tags.tag in ('anal','loli','cg')) and (tags.id=db.id) group by db.id having count(db.id)=3");
+    # # d.add("bob2","type1","img2","link2.com","bill,pop",0);
+    # # d.commit();
+    # addRawData(d,"rawdata");
+    # writeOutput(d.getAll());
+    # # d.printAllTags();
+    # # d.dexecute("select db.* from tags,db where (tags.tag in ('anal','loli','cg')) and (tags.id=db.id) group by db.id having count(db.id)=3");
 
+    while 1:
+        command=input(">");
+        runCommand(command,d);
+
+def runCommand(command,db):
+    command=command.split(" ");
+
+    if command[0]=="s" or command[0]=="search":
+        if len(command)<2:
+            print("command <tags>");
+            return;
+        
+        tagstart=1;
+        randomise=0;
+        rstring="";
+        if command[1]=="random" or command[1]=="r":
+            tagstart=2;
+            randomise=1;
+            rstring="(random)"
+
+        result=db.getTags(command[tagstart:]);
+        writeOutput(result,randomise);
+        print("found {} {}".format(len(result),rstring));        
+        return;
+
+    if command[0]=="all":
+        randomise=0;
+        rstring="";
+        if len(command)>1 and (command[1]=="random" or command[1]=="r"):
+            randomise=1;
+            rstring="random";
+        
+        writeOutput(db.getAll(),randomise);
+        print("getting all {}".format(rstring));
+        return;
+
+    if command[0]=="o" or command[0]=="output":
+        os.system("output.html");
+        print("opening output");
+        return;
+
+    if command[0]=="tags":
+        db.printTagList();
+        return;
+    
+    if command[0]=="q" or command[0]=="quit" or command[0]=="exit":
+        print("quiting");
+        quit();        
+
+    if command[0]=="add":
+        if len(command)<2:
+            print("add <rawfilename>");
+            return;
+
+        addRawData(db,command[1]);
+        return;
+        
+    if command[0]=="m" or command[0]=="modify":
+        if len(command)!=4:
+            print("modify <id> <field> <value>");
+            return;
+
+        if command[2] not in validFields:
+            print("modify <id> <field> <value>");
+            print("valid fields:");
+            for x in validFields:
+                print(x);
+            return;
+        
+        db.updateEntry(command[1],command[2],command[3]);
+        print("modifying {}".format(command[1]));
+        return;
+        
+    print("invalid command");
 
 #not done    
-def writeOutput(entries):
+def writeOutput(entries,randomise=0):
     with open("output.html","w+") as ofile:
         htmltop='''
 <!doctype html>
@@ -22,8 +98,8 @@ def writeOutput(entries):
   <head>
     <meta charset="UTF-8">
 
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="main.js"></script>
+    <link rel="stylesheet" type="text/css" href="html_resource/style.css">
+    <script src="html_resource/main.js"></script>
   </head>
   
   <body>''';
@@ -35,6 +111,9 @@ def writeOutput(entries):
 
         ofile.write(htmltop);
 
+        if randomise!=0:
+            random.shuffle(entries);
+        
         for x in entries:
             ofile.write(genEntryBox(x[1],x[2],x[5],x[3],x[4],x[0],x[6]));
 
@@ -85,7 +164,7 @@ def parseRawData(filename="rawdata"):
 def addRawData(d,filename="rawdata"):
     data=parseRawData(filename);
     for i,x in enumerate(data):
-        if i==0:
+        if x[0]=="title":
             continue;
         d.add(x[0],x[1],x[2],x[3],x[4],0);
     d.commit();

@@ -66,6 +66,11 @@ class db:
         tags=self.getAllTags();
         for x in tags:
             print(x);
+
+    def printTagList(self):
+        self.c.execute("select distinct tag from tags");
+        for x in self.c.fetchall():
+            print(x[0]);
             
     def addTags(self,idc,tags):
         command="insert into tags values ";
@@ -90,3 +95,14 @@ class db:
         tagstring=tagstring[:-1];
         self.c.execute("select db.* from tags,db where (tags.tag in ({})) and (tags.id=db.id) group by db.id having count(db.id)={}".format(tagstring,tcount));
         return self.c.fetchall();
+
+    def updateEntry(self,eid,field,value):
+        self.c.execute("update db set '{}'='{}' where id='{}'".format(field,value,eid));
+        self.commit();
+
+    #must be array of tags
+    def updateTags(self,eid,tags):
+        self.c.execute("update db set 'tags=tags || {}' where id='{}'".format(","+tags.join(","),eid));
+        self.addTags(eid,tags);            
+        self.commit();
+                
