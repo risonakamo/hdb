@@ -37,6 +37,7 @@ class db:
         self.idc+=1;
         self.c.execute('''insert into db values("{}","{}","{}","{}","{}","{}","{}")'''.format(self.idc,title,ttype,cover,link,tags,wide));
         tags=tags.split(",");
+        tags.append(ttype);
         self.addTags(self.idc,tags);
 
     def commit(self):
@@ -78,3 +79,14 @@ class db:
         self.c.execute(command);
         for x in self.c.fetchall():
             print(x);
+
+    #tags must be array of strings
+    def getTags(self,tags):
+        tcount=len(tags);
+        tagstring="";
+        for x in tags:
+            tagstring+="'"+x+"',";
+
+        tagstring=tagstring[:-1];
+        self.c.execute("select db.* from tags,db where (tags.tag in ({})) and (tags.id=db.id) group by db.id having count(db.id)={}".format(tagstring,tcount));
+        return self.c.fetchall();

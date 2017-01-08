@@ -84,6 +84,7 @@ a
 .info-box p.tags
 {
     position: absolute;
+    word-break: break-all;
     color: #858585;
     opacity: 0;
     z-index: -1;
