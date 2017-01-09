@@ -106,3 +106,7 @@ class db:
         self.addTags(eid,tags);            
         self.commit();
                 
+    def remove(self,eid):
+        self.c.execute("delete from db where id='{}'".format(eid));
+        self.c.execute("delete from tags where id='{}'".format(eid));
+        self.commit();

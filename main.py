@@ -1,7 +1,7 @@
 import os,sqlite3,random;
 from db import db;
 
-validFields=set(["title","type","cover","link"]);
+validFields=set(["title","type","cover","link","wide"]);
 
 def main():
     d=db("sample.db");
@@ -13,7 +13,7 @@ def main():
     # # d.dexecute("select db.* from tags,db where (tags.tag in ('anal','loli','cg')) and (tags.id=db.id) group by db.id having count(db.id)=3");
 
     while 1:
-        command=input(">");
+        command=input(":");
         runCommand(command,d);
 
 def runCommand(command,db):
@@ -61,12 +61,22 @@ def runCommand(command,db):
         print("quiting");
         quit();        
 
+    if command[0]=="delete":
+        if len(command)<2:
+            print("delete <id>");
+            return;
+
+        db.remove(command[1]);
+        print("deleted id {}".format(command[1]));
+        return;
+        
     if command[0]=="add":
         if len(command)<2:
             print("add <rawfilename>");
             return;
 
         addRawData(db,command[1]);
+        print("adding from file '{}'".format(command[1]));
         return;
         
     if command[0]=="m" or command[0]=="modify":
@@ -84,7 +94,16 @@ def runCommand(command,db):
         db.updateEntry(command[1],command[2],command[3]);
         print("modifying {}".format(command[1]));
         return;
-        
+
+    if command[0]=="mt" or command[0]=="modifytags":
+        if len(command)<3:
+            print("modifytags <id> <tag> <tag> <...>");
+            return;
+
+        db.updateTags(int(command[1]),command[2:]);
+        print("updated tags of {}".format(command[1]));
+        return;
+    
     print("invalid command");
 
 #not done    
