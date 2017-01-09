@@ -103,6 +103,11 @@ def runCommand(command,db):
         db.updateTags(int(command[1]),command[2:]);
         print("updated tags of {}".format(command[1]));
         return;
+
+    if command[0]=="help":
+        os.system("helpdocs\doc.html");
+        print("opened help doc");
+        return;
     
     print("invalid command");
 

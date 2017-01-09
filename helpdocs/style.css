@@ -1,0 +1,43 @@
+@charset "UTF-8";
+
+body
+{
+    margin: 0;
+}
+
+p
+{
+    font-family: roboto;
+    margin: 0;
+}
+
+.command-title
+{
+    margin-bottom: 8px;
+    font-size: 20px;
+}
+
+.infobox
+{
+    padding: 15px;
+}
+
+.keyword
+{
+    color: #008;
+}
+
+.shortcut
+{
+    color: #008000;
+}
+
+.optional-keyword
+{
+    font-style: italic;
+}
+
+.infobox:nth-of-type(2n)
+{
+    background-color: rgba(96,96,96,.2);
+}
