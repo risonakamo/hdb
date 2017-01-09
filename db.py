@@ -102,7 +102,7 @@ class db:
 
     #must be array of tags
     def updateTags(self,eid,tags):
-        self.c.execute("update db set 'tags=tags || {}' where id='{}'".format(","+tags.join(","),eid));
+        self.c.execute("update db set tags=tags || '{}' where id='{}'".format(","+",".join(tags),eid));
         self.addTags(eid,tags);            
         self.commit();
                 

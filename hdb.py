@@ -4,13 +4,7 @@ from db import db;
 validFields=set(["title","type","cover","link","wide"]);
 
 def main():
-    d=db("sample.db");
-    # # d.add("bob2","type1","img2","link2.com","bill,pop",0);
-    # # d.commit();
-    # addRawData(d,"rawdata");
-    # writeOutput(d.getAll());
-    # # d.printAllTags();
-    # # d.dexecute("select db.* from tags,db where (tags.tag in ('anal','loli','cg')) and (tags.id=db.id) group by db.id having count(db.id)=3");
+    d=db("hdb.db");
 
     while 1:
         command=input(":");
