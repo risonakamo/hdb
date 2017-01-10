@@ -7,6 +7,9 @@ class db:
         
         self.idc=0;
         self.loadIdCount();
+
+        self.tagListCache=0;
+        self.allListCache=0;
         
         self.c.execute('''
         create table if not exists db (
@@ -59,8 +62,12 @@ class db:
             print(x);
 
     def getAllTags(self):
+        if self.tagListCache!=0:
+            return self.tagListCache;
+        
         self.c.execute("select * from tags");
-        return self.c.fetchall();
+        self.tagListCache=self.c.fetchall();
+        return self.tagListCache;
     
     def printAllTags(self):
         tags=self.getAllTags();
