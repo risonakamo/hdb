@@ -31,7 +31,7 @@ def runCommand(command,db):
         print("found {} {}".format(len(result),rstring));        
         return;
 
-    if command[0]=="all":
+    if command[0]=="a" or command[0]=="all":
         randomise=0;
         rstring="";
         if len(command)>1 and (command[1]=="random" or command[1]=="r"):
@@ -49,6 +49,10 @@ def runCommand(command,db):
 
     if command[0]=="tags":
         db.printTagList();
+        return;
+
+    if command[0]=="types":
+        db.printTypeList();
         return;
     
     if command[0]=="q" or command[0]=="quit" or command[0]=="exit":
@@ -162,7 +166,7 @@ def genEntryBox(title,ttype,tags,cover,link,eid,wide=0):
     return html;
 
 #read rawdata file and return data array
-def parseRawData(filename="rawdata"):
+def parseRawData(filename="rawdata/rawdata"):
     data=[];
     entry=[];
     with open(filename) as ifile:        

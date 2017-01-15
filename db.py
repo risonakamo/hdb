@@ -60,7 +60,7 @@ class db:
         table=self.getAll();            
         for x in table:
             print(x);
-
+            
     def getAllTags(self):
         if self.tagListCache!=0:
             return self.tagListCache;
@@ -76,6 +76,11 @@ class db:
 
     def printTagList(self):
         self.c.execute("select distinct tag from tags");
+        for x in self.c.fetchall():
+            print(x[0]);
+
+    def printTypeList(self):
+        self.c.execute("select distinct type from db");
         for x in self.c.fetchall():
             print(x[0]);
             
